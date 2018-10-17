@@ -69,11 +69,18 @@ namespace ProxyTest
 			if (proxy != null) {
 				Uri proxyAddress = new Uri (proxy.GetProxy (uri).AbsoluteUri);
 				if (string.Equals (proxyAddress.AbsoluteUri, uri.AbsoluteUri)) {
+					Console.WriteLine ("ProxyAddress matches request uri. Ignoring proxy uri: '{0}'", proxyAddress);
 					return false;
 				}
 				if (proxy.IsBypassed (uri)) {
 					Console.WriteLine ("Proxy IsByPassed for '{0}'", uri);
 					return false;
+				}
+			} else {
+				Console.WriteLine ("WebRequest.DefaultWebProxy is null. Trying WebRequest.GetSystemWebProxy");
+				proxy = GetSystemProxy (uri);
+				if (proxy == null) {
+					Console.WriteLine ("WebRequest.GetSystemWebProxy returned null");
 				}
 			}
 
