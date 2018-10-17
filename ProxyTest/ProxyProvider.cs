@@ -17,7 +17,9 @@
 // limitations under the License.
 
 using System;
+using System.Configuration;
 using System.Net;
+using System.Net.Configuration;
 
 namespace ProxyTest
 {
@@ -57,6 +59,8 @@ namespace ProxyTest
 		/// <returns></returns>
 		static bool IsSystemProxySet (Uri uri)
 		{
+			CheckProxyConfigSettings ();
+
 			// The reason for not calling the GetSystemProxy is because the object
 			// that will be returned is no longer going to be the proxy that is set by the settings
 			// on the users machine only the Address is going to be the same.
@@ -85,6 +89,35 @@ namespace ProxyTest
 			}
 
 			return proxy != null;
+		}
+
+		static void CheckProxyConfigSettings ()
+		{
+			var section = ConfigurationManager.GetSection ("system.net/defaultProxy") as DefaultProxySection;
+			if (section != null) {
+				Console.WriteLine ("Found 'system.net/defaultProxy' config section. Enabled={0}", section.Enabled);
+				if (section.Enabled) {
+					if (section.Proxy != null) {
+						var proxy = section.Proxy;
+						Console.WriteLine ("  'system.net/defaultProxy': Proxy.ProxyAddress: '{0}'", proxy.ProxyAddress);
+						Console.WriteLine ("  'system.net/defaultProxy': Proxy.ScriptLocation: '{0}'", proxy.ScriptLocation);
+						Console.WriteLine ("  'system.net/defaultProxy': Proxy.AutoDetect: {0}", proxy.AutoDetect);
+						Console.WriteLine ("  'system.net/defaultProxy'n: Proxy.BypassOnLocal: {0}", proxy.BypassOnLocal);
+						if (section.BypassList != null) {
+							foreach (var bypass in section.BypassList) {
+								var bypassElement = bypass as BypassElement;
+								if (bypassElement != null) {
+									Console.WriteLine ("  'system.net/defaultProxy' config section: ByPass: {0}", bypassElement.Address);
+								}
+							}
+						}
+					} else {
+						Console.WriteLine ("No proxy element in 'system.net/defaultProxy'");
+					}
+				}
+			} else {
+				Console.WriteLine ("No 'system.net/defaultProxy' config section");
+			}
 		}
 	}
 }
