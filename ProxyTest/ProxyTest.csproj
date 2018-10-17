@@ -45,6 +45,9 @@
     <Compile Include="KeyChain.cs" />
     <Compile Include="MacCredentialProvider.cs" />
     <Compile Include="ProxyAuthenticationHandler.cs" />
+    <Compile Include="MacProxy.cs" />
+    <Compile Include="MonoTypes.cs" />
+    <Compile Include="INativeObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\libxammac.dylib">

@@ -60,6 +60,7 @@ namespace ProxyTest
 		static bool IsSystemProxySet (Uri uri)
 		{
 			CheckProxyConfigSettings ();
+			CheckMacProxy (uri);
 
 			// The reason for not calling the GetSystemProxy is because the object
 			// that will be returned is no longer going to be the proxy that is set by the settings
@@ -118,6 +119,22 @@ namespace ProxyTest
 			} else {
 				Console.WriteLine ("No 'system.net/defaultProxy' config section");
 			}
+			Console.WriteLine ();
+		}
+
+		static void CheckMacProxy (Uri uri)
+		{
+			var defaultProxy = CFNetwork.GetDefaultProxy ();
+			if (defaultProxy != null) {
+				Console.WriteLine ("Got default proxy from CFNetwork.GetDefaultProxy");
+				var proxyAddress = new Uri (defaultProxy.GetProxy (uri).AbsoluteUri);
+				if (string.Equals (proxyAddress.AbsoluteUri, uri.AbsoluteUri)) {
+					Console.WriteLine ("CFNetwork.GetDefaultProxy. ProxyAddress matches request uri. Ignoring proxy uri: '{0}'", proxyAddress);
+				} else {
+					Console.WriteLine ("Found proxy from CFNetwork.GetDefaultProxy. Url '{0}'", proxyAddress.AbsoluteUri);
+				}
+			}
+			Console.WriteLine ();
 		}
 	}
 }
