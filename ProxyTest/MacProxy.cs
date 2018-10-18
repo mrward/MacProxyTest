@@ -720,11 +720,14 @@ namespace ProxyTest
 						case CFProxyType.None:
 							// no proxy should be used
 							credentials = null;
+							Console.WriteLine ("CFWebProxy.SelectProxy: CFProxyType.None returning targetUri as proxy uri");
 							return targetUri;
 					}
 				}
 
 				credentials = null;
+
+				Console.WriteLine ("CFWebProxy.SelectProxy: returning null as proxy uri");
 
 				return null;
 			}
