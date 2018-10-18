@@ -743,7 +743,7 @@ namespace ProxyTest
 
 					if (proxies != null) {
 						for (int i = 0; i < proxies.Length && proxy == null; i++) {
-							Console.WriteLine ("CFWebProxy: ProxyType={0}", proxies[i].ProxyType);
+							Console.WriteLine ("CFWebProxy.GetProxy: ProxyType={0}", proxies[i].ProxyType);
 							switch (proxies[i].ProxyType) {
 								case CFProxyType.AutoConfigurationJavaScript:
 									proxy = GetProxyUriFromScript (proxies[i].AutoConfigurationJavaScript, targetUri, out credentials);
@@ -763,27 +763,30 @@ namespace ProxyTest
 								case CFProxyType.None:
 									// no proxy should be used
 									proxy = targetUri;
+									Console.WriteLine ("CFWebProxy.GetProxy: No proxy should used since type is None. proxyUri set to {0}", proxy);
 									break;
 							}
 						}
 
 						if (proxy == null) {
 							// no supported proxies for this Uri, fall back to trying to connect to targetUri directly
-							Console.WriteLine ("CFWebProxy: No proxies found - fallback to use targetUri directly.");
+							Console.WriteLine ("CFWebProxy.GetProxy: No proxies found - fallback to use targetUri directly.");
 							proxy = targetUri;
 						}
 					} else {
-						Console.WriteLine ("CFWebProxy: No proxies found.");
+						Console.WriteLine ("CFWebProxy.GetProxy: No proxies found.");
 						proxy = targetUri;
 					}
 				} catch (Exception ex) {
-					Console.WriteLine ("CFWebProxy: {0}", ex);
+					Console.WriteLine ("CFWebProxy.GetProxy: {0}", ex);
 					// ignore errors while retrieving proxy data
 					proxy = targetUri;
 				}
 
 				if (!userSpecified)
 					this.credentials = credentials;
+
+				Console.WriteLine ("CFWebProxy.GetProxy: ProxyUri returned from GetProxy: {0}", proxy);
 
 				return proxy;
 			}

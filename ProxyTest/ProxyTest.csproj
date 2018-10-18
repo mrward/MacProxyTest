@@ -48,6 +48,10 @@
     <Compile Include="MacProxy.cs" />
     <Compile Include="MonoTypes.cs" />
     <Compile Include="INativeObject.cs" />
+    <Compile Include="MonoWebRequest.cs" />
+    <Compile Include="DefaultProxySectionInternal.cs" />
+    <Compile Include="MonoWebProxy.cs" />
+    <Compile Include="Platform.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\libxammac.dylib">

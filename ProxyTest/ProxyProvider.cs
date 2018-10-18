@@ -35,7 +35,7 @@ namespace ProxyTest
 		public static IWebProxy GetProxy (Uri uri)
 		{
 			if (!IsSystemProxySet (uri)) {
-				Console.WriteLine ("No proxy found for '{0}'", uri);
+				Console.WriteLine ("ProxyProvider.GetProxy: No proxy found for '{0}'", uri);
 				return null;
 			}
 
@@ -47,7 +47,7 @@ namespace ProxyTest
 			// WebRequest.DefaultWebProxy seems to be more capable in terms of getting the default
 			// proxy settings instead of the WebRequest.GetSystemProxy()
 			var proxyUri = originalSystemProxy.GetProxy (uri);
-			Console.WriteLine ("Proxy uri '{0}'", uri);
+			Console.WriteLine ("ProxyProvider.GetSystemProxy Proxy uri '{0}'", proxyUri);
 
 			return new WebProxy (proxyUri);
 		}
@@ -63,9 +63,9 @@ namespace ProxyTest
 			CheckMacProxy (uri);
 
 			Console.WriteLine ("# Mono's WebRequest");
-			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetType: {0}", originalSystemProxy.GetType ().Name);
+			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetType: {0}", originalSystemProxy.GetType ().FullName);
 			var systemProxy = GetSystemProxy (uri);
-			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetProxy() returned proxy: Uri: '{0}'", uri);
+			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetProxy() returned proxy Uri: '{0}'", systemProxy.Address);
 
 			// The reason for not calling the GetSystemProxy is because the object
 			// that will be returned is no longer going to be the proxy that is set by the settings
@@ -77,7 +77,7 @@ namespace ProxyTest
 			// return that we don't need a proxy and we should try to connect directly.
 			IWebProxy proxy = WebRequest.DefaultWebProxy;
 			if (proxy != null) {
-				Console.WriteLine ("WebRequest.DefaultWebProxy.GetType: {0}", proxy.GetType ().Name);
+				Console.WriteLine ("WebRequest.DefaultWebProxy.GetType: {0}", proxy.GetType ().FullName);
 				Uri proxyAddress = new Uri (proxy.GetProxy (uri).AbsoluteUri);
 				if (string.Equals (proxyAddress.AbsoluteUri, uri.AbsoluteUri)) {
 					Console.WriteLine ("ProxyAddress matches request uri. Ignoring proxy uri: '{0}'", proxyAddress);

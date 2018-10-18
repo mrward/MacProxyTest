@@ -52,8 +52,6 @@ namespace ProxyTest
 		{
 			Uri url = GetUrl (args);
 			IWebProxy proxy = GetProxy (url);
-
-			Console.WriteLine ();
 			return Task.Run (() => Connect (url, proxy));
 		}
 
@@ -80,7 +78,19 @@ namespace ProxyTest
 			}
 
 			// Get the proxy that Mono finds.
-			return ProxyProvider.GetProxy (uri);
+			var proxyFound = ProxyProvider.GetProxy (uri);
+			Console.WriteLine ();
+
+			try {
+				SimulateMonoGetProxy (uri);
+			} catch (Exception ex) {
+				Console.WriteLine ("SimulateMonoGetProxy error {0}", ex.Message);
+			}
+
+			Console.WriteLine ();
+
+			return proxyFound;
+
 		}
 
 		static Uri GetUrl (string[] args)
@@ -118,6 +128,27 @@ namespace ProxyTest
 			}
 
 			return messageHandler;
+		}
+
+		static void SimulateMonoGetProxy (Uri uri)
+		{
+			Console.WriteLine ("# Mono - simulate Mono's WebRequest.DefaultWebProxy");
+			IWebProxy proxy = MonoWebRequest.DefaultWebProxy;
+			if (proxy != null) {
+				Console.WriteLine ("MonoWebRequest.DefaultWebProxy.GetType: {0}", proxy.GetType ().FullName);
+				Uri proxyAddress = new Uri (proxy.GetProxy (uri).AbsoluteUri);
+				if (string.Equals (proxyAddress.AbsoluteUri, uri.AbsoluteUri)) {
+					Console.WriteLine ("ProxyAddress matches request uri. Ignoring proxy uri: '{0}'", proxyAddress);
+					return;
+				}
+				if (proxy.IsBypassed (uri)) {
+					Console.WriteLine ("Proxy IsByPassed for '{0}'", uri);
+					return;
+				}
+				Console.WriteLine ("Proxy found. Uri: '{0}'", proxyAddress);
+			} else {
+				Console.WriteLine ("MonoWebRequest.DefaultWebProxy is null. Trying WebRequest.GetSystemWebProxy");
+			}
 		}
 	}
 }
