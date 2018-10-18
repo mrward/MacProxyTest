@@ -62,6 +62,10 @@ namespace ProxyTest
 			CheckProxyConfigSettings ();
 			CheckMacProxy (uri);
 
+			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetType: {0}", originalSystemProxy.GetType ().Name);
+			var systemProxy = GetSystemProxy (uri);
+			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetProxy() returned proxy: Uri: '{0}'", uri);
+
 			// The reason for not calling the GetSystemProxy is because the object
 			// that will be returned is no longer going to be the proxy that is set by the settings
 			// on the users machine only the Address is going to be the same.
@@ -72,6 +76,7 @@ namespace ProxyTest
 			// return that we don't need a proxy and we should try to connect directly.
 			IWebProxy proxy = WebRequest.DefaultWebProxy;
 			if (proxy != null) {
+				Console.WriteLine ("WebRequest.DefaultWebProxy.GetType: {0}", proxy.GetType ().Name);
 				Uri proxyAddress = new Uri (proxy.GetProxy (uri).AbsoluteUri);
 				if (string.Equals (proxyAddress.AbsoluteUri, uri.AbsoluteUri)) {
 					Console.WriteLine ("ProxyAddress matches request uri. Ignoring proxy uri: '{0}'", proxyAddress);
@@ -103,7 +108,8 @@ namespace ProxyTest
 						Console.WriteLine ("  'system.net/defaultProxy': Proxy.ProxyAddress: '{0}'", proxy.ProxyAddress);
 						Console.WriteLine ("  'system.net/defaultProxy': Proxy.ScriptLocation: '{0}'", proxy.ScriptLocation);
 						Console.WriteLine ("  'system.net/defaultProxy': Proxy.AutoDetect: {0}", proxy.AutoDetect);
-						Console.WriteLine ("  'system.net/defaultProxy'n: Proxy.BypassOnLocal: {0}", proxy.BypassOnLocal);
+						Console.WriteLine ("  'system.net/defaultProxy': Proxy.BypassOnLocal: {0}", proxy.BypassOnLocal);
+						Console.WriteLine ("  'system.net/defaultProxy': Proxy.UseSystemDefault: {0}", proxy.UseSystemDefault);
 						if (section.BypassList != null) {
 							foreach (var bypass in section.BypassList) {
 								var bypassElement = bypass as BypassElement;
