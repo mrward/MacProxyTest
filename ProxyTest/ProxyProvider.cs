@@ -62,6 +62,7 @@ namespace ProxyTest
 			CheckProxyConfigSettings ();
 			CheckMacProxy (uri);
 
+			Console.WriteLine ("# Mono's WebRequest");
 			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetType: {0}", originalSystemProxy.GetType ().Name);
 			var systemProxy = GetSystemProxy (uri);
 			Console.WriteLine ("WebRequest.GetSystemWebProxy().GetProxy() returned proxy: Uri: '{0}'", uri);
@@ -99,6 +100,7 @@ namespace ProxyTest
 
 		static void CheckProxyConfigSettings ()
 		{
+			Console.WriteLine ("# ConfigurationSection");
 			var section = ConfigurationManager.GetSection ("system.net/defaultProxy") as DefaultProxySection;
 			if (section != null) {
 				Console.WriteLine ("Found 'system.net/defaultProxy' config section. Enabled={0}", section.Enabled);
@@ -130,6 +132,7 @@ namespace ProxyTest
 
 		static void CheckMacProxy (Uri uri)
 		{
+			Console.WriteLine ("# Mono's CFNetwork");
 			var defaultProxy = CFNetwork.GetDefaultProxy ();
 			if (defaultProxy != null) {
 				Console.WriteLine ("Got default proxy from CFNetwork.GetDefaultProxy");

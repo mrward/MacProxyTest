@@ -52,11 +52,15 @@ namespace ProxyTest
 		{
 			Uri url = GetUrl (args);
 			IWebProxy proxy = GetProxy (url);
+
+			Console.WriteLine ();
 			return Task.Run (() => Connect (url, proxy));
 		}
 
 		static IWebProxy GetProxy (Uri uri)
 		{
+			Console.WriteLine ("# Xamarin.Mac");
+
 			// Check Proxy types
 			var proxies = CoreFoundation.CFNetwork.GetProxiesForUri (uri, null);
 			if (proxies?.Any () == true) {
@@ -89,6 +93,7 @@ namespace ProxyTest
 
 		static async Task Connect (Uri uri, IWebProxy proxy)
 		{
+			Console.WriteLine ("# HttpClient connection test:");
 			var handler = GetMessageHandler (uri, proxy);
 			var client = new HttpClient (handler);
 			var request = new HttpRequestMessage (HttpMethod.Get, uri);
